@@ -8,6 +8,7 @@ logging.basicConfig(level=logging.INFO)
 class Settings(BaseSettings):
     MONGO_DB_URI: str
     ENVIRONMENT: str
+    CELERY_BROKER_URL: str
 
     model_config = SettingsConfigDict(env_file=".env", env_file_encoding="utf-8")
 

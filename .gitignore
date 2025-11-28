@@ -10,3 +10,8 @@ wheels/
 .venv
 
 .env
+# Celery Beat schedule file
+celerybeat-schedule
+
+# Logs
+*.log

@@ -1,5 +1,6 @@
 import os
 import sys
+
 # print(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 import asyncio
@@ -100,13 +101,15 @@ async def save_book(book_data: dict):
     logger.info(f"Updated book '{title}' with changes: {list(changes.keys())}")
 
 
-async def init_db():
+async def init_db() -> AsyncMongoClient:
+    """Initialize the database connection and Beanie ODM."""
     client = AsyncMongoClient(settings.MONGO_DB_URI)
 
     await init_beanie(
         database=client.get_default_database(),
         document_models=[Book, BookCategory, ChangeLog],
     )
+    return client
 
 
 async def crawl_page(page: int):

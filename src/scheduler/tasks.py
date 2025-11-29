@@ -5,6 +5,7 @@ import logging
 
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
+from typing import Optional
 from celery import shared_task
 
 from scheduler.utils import (
@@ -18,7 +19,7 @@ logger = logging.getLogger(__name__)
 
 
 @shared_task
-def execute_scrape():
+def execute_scrape(limit: Optional[int] = None):
     """
     Task that runs the web scraping process.
     This is the entry point called by Celery Beat or can be invoked manually.
@@ -26,7 +27,7 @@ def execute_scrape():
     logger.info("🕒 Starting scrape task...")
 
     try:
-        result = asyncio.run(run_scraping_process())
+        result = asyncio.run(run_scraping_process(limit))
         logger.info(f"✅ Scrape completed successfully: {result}")
         return result
     except Exception as e:

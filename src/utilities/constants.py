@@ -10,3 +10,4 @@ BOOK_FIELDS_TO_TRACK: List[str] = [
     "no_of_reviews",
     "no_of_ratings",
 ]
+SIGNIFICANT_CHANGE_THRESHOLD = 10

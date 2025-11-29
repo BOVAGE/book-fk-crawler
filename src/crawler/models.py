@@ -6,6 +6,8 @@ from beanie import Document, Indexed, Link
 from datetime import datetime
 from decimal import Decimal
 from bson.decimal128 import Decimal128
+from enum import Enum
+import uuid
 
 
 class BookCategory(Document):
@@ -51,3 +53,35 @@ class ChangeLog(Document):
     old_value: Optional[str] = None
     new_value: Optional[str] = None
     changed_at: datetime = datetime.utcnow()
+
+
+class CrawlStatus(str, Enum):
+    """Crawl session status"""
+
+    RUNNING = "running"
+    COMPLETED = "completed"
+    FAILED = "failed"
+
+
+class CrawlSession(Document):
+    """Simple crawl session tracking"""
+
+    session_id: uuid.UUID = Field(unique=True, default_factory=uuid.uuid4)  # UUID
+    status: CrawlStatus = CrawlStatus.RUNNING
+
+    # Progress tracking
+    start_time: datetime
+    end_time: Optional[datetime] = None
+    last_completed_page: int = 0  # Last successfully completed page
+    target_pages: Optional[int] = None
+
+    # Statistics
+    total_books_processed: int = 0
+    books_added: int = 0
+    books_updated: int = 0
+
+    # Error info
+    error_message: Optional[str] = None
+
+    created_at: datetime = datetime.utcnow()
+    updated_at: datetime = datetime.utcnow()

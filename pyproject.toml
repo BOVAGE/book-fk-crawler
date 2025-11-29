@@ -9,6 +9,7 @@ dependencies = [
     "beautifulsoup4==4.14.2",
     "celery>=5.5.3",
     "fastapi>=0.122.0",
+    "fastapi-limiter>=0.1.6",
     "httpx==0.28.1",
     "lxml==6.0.2",
     "pydantic==2.12.4",

@@ -4,7 +4,7 @@ import sys
 # print(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from src.config import settings
-from fastapi import FastAPI, status, Request
+from fastapi import FastAPI, status, Request, Depends
 from fastapi.exceptions import RequestValidationError, HTTPException
 from fastapi.responses import JSONResponse
 from api.routes import book_router, changes_router
@@ -14,7 +14,11 @@ from crawler.models import Book, BookCategory, ChangeLog
 from contextlib import asynccontextmanager
 from pymongo import AsyncMongoClient
 from beanie import init_beanie
+from api.dependencies import get_api_key, get_api_key_from_header
 import logging
+from fastapi_limiter import FastAPILimiter
+from fastapi_limiter.depends import RateLimiter
+import redis.asyncio as redis
 
 logger = logging.getLogger(__name__)
 logging.basicConfig(level=logging.INFO)
@@ -30,6 +34,12 @@ async def lifespan(app: FastAPI):
         document_models=[Book, BookCategory, ChangeLog],
     )
     logger.info("Database initialized successfully")
+    redis_connection = redis.from_url(
+        settings.REDIS_URL, encoding="utf-8", decode_responses=True
+    )
+    await FastAPILimiter.init(
+        redis_connection, prefix="fastapi-limiter", identifier=get_api_key_from_header
+    )
 
     yield
 
@@ -117,5 +127,32 @@ elif settings.ENVIRONMENT == "production":
         allow_headers=["*"],
         allow_credentials=True,
     )
-app.include_router(book_router, prefix=f"/api/{version}/books", tags=["books"])
-app.include_router(changes_router, prefix=f"/api/{version}/changes", tags=["changes"])
+
+app.include_router(
+    book_router,
+    prefix=f"/api/{version}/books",
+    tags=["books"],
+    dependencies=[
+        Depends(get_api_key),
+        Depends(
+            RateLimiter(
+                times=settings.RATE_LIMIT_MAX_REQUESTS,
+                seconds=settings.RATE_LIMIT_WINDOW_SECONDS,
+            )
+        ),
+    ],
+)
+app.include_router(
+    changes_router,
+    prefix=f"/api/{version}/changes",
+    tags=["changes"],
+    dependencies=[
+        Depends(get_api_key),
+        Depends(
+            RateLimiter(
+                times=settings.RATE_LIMIT_MAX_REQUESTS,
+                seconds=settings.RATE_LIMIT_WINDOW_SECONDS,
+            )
+        ),
+    ],
+)

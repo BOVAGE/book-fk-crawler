@@ -9,6 +9,10 @@ class Settings(BaseSettings):
     MONGO_DB_URI: str
     ENVIRONMENT: str
     CELERY_BROKER_URL: str
+    SECRET_API_KEY: str
+    REDIS_URL: str
+    RATE_LIMIT_MAX_REQUESTS: int
+    RATE_LIMIT_WINDOW_SECONDS: int
 
     model_config = SettingsConfigDict(env_file=".env", env_file_encoding="utf-8")
 

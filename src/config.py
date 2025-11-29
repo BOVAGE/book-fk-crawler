@@ -7,6 +7,7 @@ logging.basicConfig(level=logging.INFO)
 
 class Settings(BaseSettings):
     MONGO_DB_URI: str
+    MONGO_DB_TEST_URI: str
     ENVIRONMENT: str
     CELERY_BROKER_URL: str
     SECRET_API_KEY: str

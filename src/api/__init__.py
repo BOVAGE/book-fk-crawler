@@ -27,10 +27,15 @@ logging.basicConfig(level=logging.INFO)
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     logger.info("Server is starting...")
-    client = AsyncMongoClient(settings.MONGO_DB_URI)
+    db_uri = (
+        settings.MONGO_DB_TEST_URI
+        if settings.ENVIRONMENT == "test"
+        else settings.MONGO_DB_URI
+    )
+    db_client = AsyncMongoClient(db_uri)
 
     await init_beanie(
-        database=client.get_default_database(),
+        database=db_client.get_default_database(),
         document_models=[Book, BookCategory, ChangeLog],
     )
     logger.info("Database initialized successfully")
@@ -44,7 +49,8 @@ async def lifespan(app: FastAPI):
     yield
 
     # Cleanup on shutdown
-    await client.close()
+    await db_client.close()
+    await FastAPILimiter.close()
     logger.info("Server is stopping")
 
 
@@ -71,7 +77,7 @@ async def validation_exception_handler(request: Request, exc: RequestValidationE
         error_details[field].append(error["msg"])
 
     return JSONResponse(
-        status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+        status_code=status.HTTP_422_UNPROCESSABLE_CONTENT,
         content=ErrorResponse(error=error_details).model_dump(),
     )
 

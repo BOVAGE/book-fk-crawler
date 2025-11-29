@@ -50,7 +50,7 @@ class BookFullDetail(BaseModel):
     cover_image_url: Optional[str] = None
     no_of_ratings: int
     metadata: Metadata
-    raw_html: str
+    raw_html: Optional[str]
     created_at: datetime
     updated_at: datetime
 

@@ -21,3 +21,9 @@ dependencies = [
     "tenacity==9.1.2",
     "uvicorn==0.38.0",
 ]
+
+[dependency-groups]
+dev = [
+    "black==25.11.0",
+    "isort==7.0.0",
+]

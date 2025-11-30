@@ -1,5 +1,5 @@
 import httpx
-from tenacity import retry, wait_exponential, stop_after_attempt, retry_if_exception
+from tenacity import retry, retry_if_exception, stop_after_attempt, wait_exponential
 
 HEADERS = {"User-Agent": "Mozilla/5.0 (compatible; FKCrawler/1.0)"}
 
@@ -29,6 +29,7 @@ async def fetch_html(url: str) -> str:
 
 if __name__ == "__main__":
     import asyncio
+
     from tenacity import RetryError
 
     try:

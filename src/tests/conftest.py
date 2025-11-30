@@ -1,15 +1,15 @@
-import pytest_asyncio
-import asyncio
 import os
 import sys
-from pymongo import AsyncMongoClient
+
+import pytest_asyncio
 from beanie import init_beanie
+from pymongo import AsyncMongoClient
 
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 
-from crawler.models import Book, BookCategory, ChangeLog, CrawlSession
 from config import settings
+from src.models import Book, BookCategory, ChangeLog, CrawlSession
 
 
 @pytest_asyncio.fixture(scope="function", autouse=True)

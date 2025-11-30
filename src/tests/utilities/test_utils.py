@@ -1,5 +1,4 @@
-import pytest
-from utilities.utils import generate_hash, detect_changes
+from utilities.utils import detect_changes, generate_hash
 
 
 class TestUtilities:

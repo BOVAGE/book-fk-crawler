@@ -1,9 +1,12 @@
-from typing import Any, List, Optional, Dict, Generic, TypeVar
-from pydantic import BaseModel
-from beanie import PydanticObjectId
-from decimal import Decimal
 from datetime import datetime
-from crawler.models import Metadata
+from decimal import Decimal
+from enum import Enum
+from typing import Any, Dict, Generic, List, Optional, TypeVar
+
+from beanie import PydanticObjectId
+from pydantic import BaseModel
+
+from src.models import Metadata
 
 T = TypeVar("T")
 
@@ -105,6 +108,20 @@ class ChangesListData(BaseModel):
     total: int
     period_hours: int
     changes: List[ChangeLogData]
+
+
+class SortBy(str, Enum):
+    # Ascending (no prefix)
+    NO_OF_RATINGS_ASC = "no_of_ratings"
+    NO_OF_REVIEWS_ASC = "no_of_reviews"
+    PRICE_WITH_TAX_ASC = "price_with_tax"
+    PRICE_WITHOUT_TAX_ASC = "price_without_tax"
+
+    # Descending (with hyphen prefix)
+    NO_OF_RATINGS_DESC = "-no_of_ratings"
+    NO_OF_REVIEWS_DESC = "-no_of_reviews"
+    PRICE_WITH_TAX_DESC = "-price_with_tax"
+    PRICE_WITHOUT_TAX_DESC = "-price_without_tax"
 
 
 BooksListResponse = SuccessResponse[BooksListData]

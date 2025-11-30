@@ -1,15 +1,17 @@
 import json
+import logging
 import os
 import sys
-import logging
 from datetime import datetime, timedelta
-from typing import Dict, Any
+from typing import Any, Dict
 
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from crawler.main import crawl_all, init_db
-from crawler.models import Book, ChangeLog
-from typing import Dict, Any, Optional
+from typing import Any, Dict, Optional
+
+from crawler.main import crawl_all
+from db import init_db
+from models import Book, ChangeLog
 from utilities.constants import SIGNIFICANT_CHANGE_THRESHOLD
 
 logger = logging.getLogger(__name__)
@@ -105,7 +107,7 @@ async def run_scraping_process(limit: Optional[int] = None) -> Dict[str, Any]:
     initial_book_count = await Book.find().count()
     initial_change_count = await ChangeLog.find().count()
 
-    logger.info(f"📊 Starting scrape - Current books: {initial_book_count}")
+    logger.info(f"📊 Starting crawl - Current books: {initial_book_count}")
 
     await crawl_all(limit=limit)
 
@@ -128,7 +130,7 @@ async def run_scraping_process(limit: Optional[int] = None) -> Dict[str, Any]:
         "status": "success",
     }
 
-    logger.info(f"📈 Scrape Summary: {summary}")
+    logger.info(f"📈 crawl Summary: {summary}")
 
     if new_books > 0 or new_changes > SIGNIFICANT_CHANGE_THRESHOLD:
         await send_change_alert(summary)

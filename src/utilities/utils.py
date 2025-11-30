@@ -1,6 +1,7 @@
 import hashlib
 import json
 from typing import Any, Dict
+
 from utilities.constants import BOOK_FIELDS_TO_TRACK
 
 

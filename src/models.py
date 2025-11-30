@@ -1,13 +1,12 @@
-from typing import Optional, Annotated, Any
-
-from pydantic import BaseModel, Field, field_validator
-
-from beanie import Document, Indexed, Link
+import uuid
 from datetime import datetime
 from decimal import Decimal
-from bson.decimal128 import Decimal128
 from enum import Enum
-import uuid
+from typing import Annotated, Any, Optional
+
+from beanie import Document, Indexed, Link
+from bson.decimal128 import Decimal128
+from pydantic import BaseModel, Field, field_validator
 
 
 class BookCategory(Document):
@@ -16,7 +15,7 @@ class BookCategory(Document):
 
 
 class Metadata(BaseModel):
-    scraped_at: datetime
+    crawled_at: datetime
     status: str
     source_url: str
     content_hash: str

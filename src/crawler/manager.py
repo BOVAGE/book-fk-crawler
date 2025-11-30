@@ -1,7 +1,8 @@
 import logging
-from crawler.models import CrawlSession, CrawlStatus
-from typing import Optional
 from datetime import datetime, timedelta
+from typing import Optional
+
+from models import CrawlSession, CrawlStatus
 
 logger = logging.getLogger(__name__)
 logging.basicConfig(level=logging.INFO)

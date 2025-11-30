@@ -1,14 +1,15 @@
+from datetime import datetime
+from decimal import Decimal
+from typing import AsyncGenerator, List
+
+import httpx
 import pytest
 import pytest_asyncio
-from typing import AsyncGenerator, List
-import httpx
-from decimal import Decimal
-from datetime import datetime
+from asgi_lifespan import LifespanManager
 
 from api import app
-from crawler.models import Book, BookCategory, ChangeLog, Metadata
 from config import settings
-from asgi_lifespan import LifespanManager
+from src.models import Book, BookCategory, ChangeLog, Metadata
 
 
 @pytest_asyncio.fixture
@@ -64,8 +65,8 @@ async def sample_books(sample_categories) -> List[Book]:
             "no_of_ratings": 4,
             "cover_image_url": "https://example.com/image1.jpg",
             "metadata": Metadata(
-                scraped_at=datetime.utcnow(),
-                status="scraped",
+                crawled_at=datetime.utcnow(),
+                status="crawled",
                 source_url="https://example.com/book1",
                 content_hash="abc123",
             ),
@@ -83,8 +84,8 @@ async def sample_books(sample_categories) -> List[Book]:
             "no_of_ratings": 5,
             "cover_image_url": "https://example.com/image2.jpg",
             "metadata": Metadata(
-                scraped_at=datetime.utcnow(),
-                status="scraped",
+                crawled_at=datetime.utcnow(),
+                status="crawled",
                 source_url="https://example.com/book2",
                 content_hash="def456",
             ),
@@ -102,8 +103,8 @@ async def sample_books(sample_categories) -> List[Book]:
             "no_of_ratings": 3,
             "cover_image_url": "https://example.com/image3.jpg",
             "metadata": Metadata(
-                scraped_at=datetime.utcnow(),
-                status="scraped",
+                crawled_at=datetime.utcnow(),
+                status="crawled",
                 source_url="https://example.com/book3",
                 content_hash="ghi789",
             ),

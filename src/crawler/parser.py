@@ -1,12 +1,13 @@
-from bs4 import BeautifulSoup
-from urllib.parse import urljoin
 from decimal import Decimal
+from typing import Any, Dict
+from urllib.parse import urljoin
+
+from bs4 import BeautifulSoup
+
 from utilities.constants import BASE_URL
-from typing import Dict, Any
 
 
-
-def parse_book_list(html: str) -> list[str]:
+def _parse_book_list(html: str) -> list[str]:
     """Extract URLs of books on the page."""
     soup = BeautifulSoup(html, "lxml")
     links = []
@@ -16,7 +17,8 @@ def parse_book_list(html: str) -> list[str]:
     return links
 
 
-def parse_book_details(html: str, url: str) -> Dict[str, Any]:
+def _parse_book_details(html: str, url: str) -> Dict[str, Any]:
+    """Extract book details from its HTML page."""
     soup = BeautifulSoup(html, "lxml")
     # extract unique title from the url
     # url format: "https://books.toscrape.com/catalogue/soumission_998/index.html"

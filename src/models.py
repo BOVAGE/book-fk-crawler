@@ -10,7 +10,7 @@ from pydantic import BaseModel, Field, field_validator
 
 
 class BookCategory(Document):
-    name: str
+    name: str = Field(unique=True)
     description: Optional[str] = None
 
 

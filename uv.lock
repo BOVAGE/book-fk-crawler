@@ -297,8 +297,8 @@ requires-dist = [
 
 [package.metadata.requires-dev]
 dev = [
-    { name = "black", specifier = ">=25.11.0" },
-    { name = "isort", specifier = ">=7.0.0" },
+    { name = "black", specifier = "==25.11.0" },
+    { name = "isort", specifier = "==7.0.0" },
 ]
 
 [[package]]

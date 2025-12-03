@@ -142,7 +142,6 @@ BOOK_FIELDS_TO_TRACK: List[str] = [
 ## Database Design
 
 ### BookCategories Collection
-
 This collection is designed to prevent duplication of category names across multiple book documents. Since many books can belong to the same category, this approach allows the book document to reference the category instead of storing its name repeatedly. This not only reduces redundancy but also ensures consistency in category data across the system.
 
 ```javascript
@@ -293,15 +292,7 @@ cd bolu-book-fk-crawler
 
 **Note:** All subsequent commands should be executed from the project's root directory unless stated otherwise.
 
-### 2. Python Environment Setup
-
-```bash
-# Install dependencies with uv (recommended)
-pip install uv
-uv sync
-```
-
-### 3. Environment Configuration
+### 2. Environment Configuration
 
 Create `.env` file in project root based on the `.env.sample` file
 
@@ -314,49 +305,32 @@ Fill the environment variables in the `.env` file with appropriate values.
 ```bash
 #.env
 
-MONGO_DB_URI=mongodb://localhost:27017/filers
-MONGO_DB_TEST_URI=mongodb://localhost:27017/filers-test
+MONGO_DB_URI=mongodb://mongo:27017/filers
+MONGO_DB_TEST_URI=mongodb://mongo:27017/filers-test
 ENVIRONMENT=development
-CELERY_BROKER_URL=redis://localhost:6379/0
+CELERY_BROKER_URL=redis://redis:6379/0
 SECRET_API_KEY=your_secret_api_key
-REDIS_URL=redis://localhost:6379/1
+REDIS_URL=redis://redis:6379/1
 RATE_LIMIT_WINDOW_SECONDS=120
 RATE_LIMIT_MAX_REQUESTS=1000
 ```
 
 This project uses the `pydantic-settings` library to load and validate environment variables, as implemented in `src/config.py`. This approach adheres to the principles of the 12-Factor App methodology, particularly in configuration management.
 
-### 4. Services Setup
-
+### 3. Services Setup
 ```bash
-# Start MongoDB (if not running as service or not using docker)
-mongod --dbpath /path/to/your/db
-
-# Start Redis (if not running as service or not using docker)
-redis-server
+# start the services (Redis, MongoDB, API)
+docker compose up api 
 ```
 
-**OR**
-
-```bash
-docker run -d --name mongo1 -p 27017:27017 -v mongo-data:/data/db mongo:latest
-
-docker run -d --name redis1 -p 6379:6379 -v redis-data:/data redis:latest
-```
-
-### 5. Initialize Database
+### 4. Initialize Database
 
 ```bash
 # Run initial crawl to populate database with books on the first page
-uv run python src/crawler/main.py --limit=1
+docker compose run --rm api uv run python src/crawler/main.py --limit=1
 ```
 
 ## Running the System
-
-```bash
-# Start API server on port 8000 (default)
-uv run uvicorn src.api:app --reload
-```
 
 ### Interactive API Documentation
 
@@ -408,11 +382,7 @@ Use the value of `SECRET_API_KEY` set in your `.env` file as the value for x-api
 **Note:** The schedule configuration in`src/scheduler/celery.py` file can be edited to trigger an execution almost instantly instead of waiting for a specific time for testing.
 
 ```bash
-# Start Celery worker (Terminal 1)
-uv run celery -A src.scheduler.celery worker --loglevel=info
-
-# Start Celery beat scheduler (Terminal 2)
-uv run celery -A src.scheduler.celery beat --loglevel=info
+docker compose up celery_worker celery_beat
 ```
 
 ### Automated Report Generation
@@ -487,11 +457,11 @@ src/tests/
 
 ```bash
 # All tests
-uv run pytest
+docker compose run --rm api uv run pytest
 
 # Specific test categories
-uv run pytest src/tests/api/    # API tests
-uv run pytest src/tests/utilities/  # Utility tests
+docker compose run --rm api uv run pytest src/tests/api/    # API tests
+docker compose run --rm api uv run pytest src/tests/utilities/  # Utility tests
 ```
 
 **Note:** Each test runs with a clean database state.
@@ -529,7 +499,6 @@ Scheduler: Celery Worker Execution log
 
 ## Recommendation for Production
 
-- **Containerization of services using Docker Compose for simplified development setup**
 - **Database connection pooling** for high-concurrency scenarios
 - **Distributed crawling** coordination for multi-instance deployments
 - **Robust monitoring and alerts** using sentry, sms or slack.
